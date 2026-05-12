@@ -45,15 +45,17 @@ pub struct PeerRegistry {
 
 impl PeerRegistry {
     /// Where the registry is stored on disk.
-    /// Honors `XDG_CONFIG_HOME`; falls back to `~/.config/unhosted/peers.toml`.
+    ///
+    /// Resolution order:
+    /// 1. `$XDG_CONFIG_HOME/unhosted/peers.toml` if `XDG_CONFIG_HOME` is set
+    /// 2. `%APPDATA%\unhosted\peers.toml` on Windows
+    /// 3. `~/.config/unhosted/peers.toml` on macOS and Linux
     pub fn config_path() -> Result<PathBuf> {
-        let dir = if let Ok(xdg) = std::env::var("XDG_CONFIG_HOME") {
-            PathBuf::from(xdg)
-        } else {
-            let home = std::env::var("HOME").context("HOME env var not set")?;
-            PathBuf::from(home).join(".config")
-        };
-        Ok(dir.join("unhosted").join("peers.toml"))
+        config_path_from_env(
+            std::env::var("XDG_CONFIG_HOME").ok(),
+            std::env::var("HOME").ok(),
+            std::env::var("APPDATA").ok(),
+        )
     }
 
     /// Load from disk. Returns an empty registry if no config file exists.
@@ -108,6 +110,23 @@ impl PeerRegistry {
     }
 }
 
+/// Pure path resolver, separated from `std::env` so it is testable without
+/// touching process-global environment variables.
+fn config_path_from_env(
+    xdg: Option<String>,
+    home: Option<String>,
+    appdata: Option<String>,
+) -> Result<PathBuf> {
+    let dir = if let Some(xdg) = xdg {
+        PathBuf::from(xdg)
+    } else if cfg!(windows) {
+        PathBuf::from(appdata.context("APPDATA env var not set")?)
+    } else {
+        PathBuf::from(home.context("HOME env var not set")?).join(".config")
+    };
+    Ok(dir.join("unhosted").join("peers.toml"))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -148,5 +167,44 @@ mod tests {
         };
         let names: Vec<&str> = reg.by_priority().iter().map(|p| p.name.as_str()).collect();
         assert_eq!(names, vec!["b", "c", "a"]);
+    }
+
+    #[test]
+    fn config_path_prefers_xdg_when_set() {
+        let p = config_path_from_env(
+            Some("xdg-root".into()),
+            Some("home-root".into()),
+            Some("appdata-root".into()),
+        )
+        .unwrap();
+        assert!(p.starts_with("xdg-root"));
+        assert!(p.ends_with(PathBuf::from("unhosted").join("peers.toml")));
+    }
+
+    #[test]
+    fn config_path_falls_back_to_platform_dir() {
+        let p = config_path_from_env(
+            None,
+            Some("home-root".into()),
+            Some("appdata-root".into()),
+        )
+        .unwrap();
+        if cfg!(windows) {
+            assert!(p.starts_with("appdata-root"));
+        } else {
+            assert!(p.starts_with(PathBuf::from("home-root").join(".config")));
+        }
+        assert!(p.ends_with("peers.toml"));
+    }
+
+    #[test]
+    fn config_path_errors_when_required_env_missing() {
+        let err = config_path_from_env(None, None, None).unwrap_err();
+        let msg = format!("{err}");
+        if cfg!(windows) {
+            assert!(msg.contains("APPDATA"));
+        } else {
+            assert!(msg.contains("HOME"));
+        }
     }
 }
