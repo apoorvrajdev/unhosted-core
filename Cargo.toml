@@ -1,0 +1,61 @@
+[workspace]
+resolver = "2"
+members = ["crates/unhosted-core", "crates/unhosted-cli", "crates/unhosted-desktop", "crates/unhosted-relay"]
+
+[workspace.package]
+version = "0.0.3"
+edition = "2021"
+license = "AGPL-3.0-or-later"
+repository = "https://github.com/unhosted-ai/unhosted"
+authors = ["Unhosted contributors"]
+rust-version = "1.75"
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+tokio-stream = "0.1"
+axum = { version = "0.8", features = ["ws"] }
+tower-http = { version = "0.6", features = ["cors"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.8"
+anyhow = "1"
+clap = { version = "4.5", features = ["derive"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+futures = "0.3"
+bytes = "1"
+rust-embed = { version = "8", features = ["axum", "interpolate-folder-path"] }
+mime_guess = "2"
+tao = "0.31"
+wry = "0.48"
+mdns-sd = "0.13"
+hostname = "0.4"
+ed25519-dalek = { version = "2", features = ["rand_core"] }
+rand = "0.8"
+base64 = "0.22"
+tokio-tungstenite = { version = "0.27", features = ["rustls-tls-webpki-roots"] }
+url = "2"
+# QUIC transport for encrypted peer-to-peer requests in trusted mode.
+# rustls 0.23 + ring is what quinn 0.11 expects; rcgen produces the
+# self-signed cert derived from each daemon's Ed25519 identity.
+quinn = { version = "0.11", default-features = false, features = ["runtime-tokio", "rustls", "ring", "log"] }
+rustls = { version = "0.23", default-features = false, features = ["ring", "std"] }
+rustls-pki-types = "1"
+rcgen = { version = "0.13", default-features = false, features = ["pem", "ring"] }
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+strip = true
+panic = "abort"
+debug = false
+incremental = false
+
+# `release-debug`: optimized but keeps debuginfo. Useful for profiling.
+# Build with: cargo build --profile release-debug
+[profile.release-debug]
+inherits = "release"
+strip = false
+debug = "line-tables-only"

@@ -1,0 +1,37 @@
+# Claude / agent state
+.claude/
+
+# macOS
+.DS_Store
+._*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# OS / common
+Thumbs.db
+desktop.ini
+
+# Build / dependency artefacts (language TBD — keep this list lean)
+node_modules/
+dist/
+build/
+target/
+*.app/
+*.icns
+*.iconset/
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local env
+.env
+.env.local
