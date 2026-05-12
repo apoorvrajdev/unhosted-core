@@ -56,7 +56,7 @@ The first two are free forever. The third is the safety net. You can use Unhoste
 
 ## Quickstart
 
-> Aspirational. The CLI does not exist yet. This block describes the day-one product. For the from-source path that runs today, see [GETTING_STARTED.md](GETTING_STARTED.md).
+> Aspirational. The CLI does not exist yet. This block describes the day-one product. For the from-source path that runs today, see [docs/getting-started.md](docs/getting-started.md).
 
 ```bash
 # install

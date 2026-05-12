@@ -16,7 +16,7 @@ GitHub: [@sinhaankur](https://github.com/sinhaankur)
 GitHub: [@apoorvrajdev](https://github.com/apoorvrajdev)
 
 - Repository structure and presentation on this fork
-- Developer onboarding: [DEVELOPMENT.md](DEVELOPMENT.md), [GETTING_STARTED.md](GETTING_STARTED.md)
+- Developer onboarding: [DEVELOPMENT.md](DEVELOPMENT.md), [docs/getting-started.md](docs/getting-started.md)
 - Documentation architecture: [ARCHITECTURE.md](ARCHITECTURE.md) as a map into the ADRs, [ROADMAP.md](ROADMAP.md) extracted from the README
 - Forward work: distributed-systems contributions, networking experiments, additional test coverage
 

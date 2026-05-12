@@ -37,7 +37,7 @@ cargo run -p unhosted-cli -- run "explain the trust radius"
 
 Configuration and state live under `~/.config/unhosted/` and `~/.cache/unhosted/`, following the XDG Base Directory spec.
 
-For a guided first run, see [GETTING_STARTED.md](GETTING_STARTED.md).
+For a guided first run, see [docs/getting-started.md](docs/getting-started.md).
 
 ## Test
 
@@ -72,6 +72,6 @@ CI rejects any clippy warning or unformatted file. Both commands are idempotent;
 ## Where to look next
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — one-page map of the design decisions
-- [GETTING_STARTED.md](GETTING_STARTED.md) — first-run walkthrough
+- [docs/getting-started.md](docs/getting-started.md) — first-run walkthrough
 - [design/](design/) — eight numbered ADRs that record what was decided and why
 - [CHANGELOG.md](CHANGELOG.md) — shipped versions, dated
