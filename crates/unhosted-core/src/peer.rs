@@ -183,12 +183,8 @@ mod tests {
 
     #[test]
     fn config_path_falls_back_to_platform_dir() {
-        let p = config_path_from_env(
-            None,
-            Some("home-root".into()),
-            Some("appdata-root".into()),
-        )
-        .unwrap();
+        let p = config_path_from_env(None, Some("home-root".into()), Some("appdata-root".into()))
+            .unwrap();
         if cfg!(windows) {
             assert!(p.starts_with("appdata-root"));
         } else {
