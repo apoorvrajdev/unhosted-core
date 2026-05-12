@@ -15,6 +15,13 @@
   <a href="BRAND.md">brand</a>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/status-pre--alpha-303030?style=flat-square&labelColor=141414" alt="status: pre-alpha">
+  <img src="https://img.shields.io/badge/rust-2021%20edition-303030?style=flat-square&labelColor=141414&logo=rust&logoColor=white" alt="rust: 2021 edition">
+  <img src="https://img.shields.io/badge/license-AGPL--3.0-303030?style=flat-square&labelColor=141414" alt="license: AGPL-3.0">
+  <img src="https://img.shields.io/github/actions/workflow/status/apoorvrajdev/unhosted-core/rust.yml?branch=main&style=flat-square&label=ci&labelColor=141414&color=303030" alt="ci">
+</p>
+
 ---
 
 > **Status: pre-alpha.** Reading this README is currently the only thing that works. The manifesto is real. The product is being built in public.
@@ -49,7 +56,7 @@ The first two are free forever. The third is the safety net. You can use Unhoste
 
 ## Quickstart
 
-> Aspirational. The CLI does not exist yet. This block describes the day-one product.
+> Aspirational. The CLI does not exist yet. This block describes the day-one product. For the from-source path that runs today, see [GETTING_STARTED.md](GETTING_STARTED.md).
 
 ```bash
 # install
@@ -96,6 +103,10 @@ Reproducible benchmarks land in `benchmarks/` once any code exists. We will publ
 5. Public swarm MVP (testnet first, USDC mainnet later)
 
 No dates. We will ship and tell you what works.
+
+## Maintainers
+
+Maintained by Ankur Sinha (original author and lead) and Apoorv Raj (infrastructure, documentation, developer experience). See [MAINTAINERS.md](MAINTAINERS.md) for the split of responsibilities.
 
 ## License
 
