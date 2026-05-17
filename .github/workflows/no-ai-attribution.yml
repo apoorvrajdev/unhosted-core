@@ -1,0 +1,68 @@
+name: No AI attribution in commits
+
+# Repo policy: commit messages must not contain AI/agent attribution
+# (Co-Authored-By for AI assistants, noreply@anthropic.com, "Generated with"
+# markers, etc.). DCO Signed-off-by lines are required and allowed.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine commit range
+        id: range
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if [ "$EVENT" = "pull_request" ]; then
+            echo "range=${BASE}..${HEAD}" >> "$GITHUB_OUTPUT"
+          elif [ -n "${BEFORE:-}" ] && [ "$BEFORE" != "0000000000000000000000000000000000000000" ]; then
+            echo "range=${BEFORE}..${AFTER}" >> "$GITHUB_OUTPUT"
+          else
+            echo "range=${AFTER}~1..${AFTER}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Scan commit messages
+        env:
+          RANGE: ${{ steps.range.outputs.range }}
+        run: |
+          set -eu
+          messages=$(git log --format='%H%n%B%n---END---' "$RANGE" || true)
+          if [ -z "$messages" ]; then
+            echo "No new commits to scan."
+            exit 0
+          fi
+
+          # Strip Signed-off-by lines so DCO doesn't trip the "by" match.
+          filtered=$(printf '%s\n' "$messages" | grep -viE '^\s*Signed-off-by:' || true)
+
+          fail=0
+          if printf '%s' "$filtered" | grep -niE 'co-authored-by:.*(claude|anthropic)'; then
+            echo "::error::Commit message contains AI Co-Authored-By trailer."
+            fail=1
+          fi
+          if printf '%s' "$filtered" | grep -niE 'noreply@anthropic\.com'; then
+            echo "::error::Commit message references noreply@anthropic.com."
+            fail=1
+          fi
+          if printf '%s' "$filtered" | grep -niE 'generated with .*claude'; then
+            echo "::error::Commit message contains 'Generated with Claude' marker."
+            fail=1
+          fi
+
+          exit "$fail"
